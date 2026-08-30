@@ -1,0 +1,39 @@
+name: hello-api-java
+
+on:
+  push:
+    paths:
+      - "hello-api-java/**"
+      - ".github/workflows/hello-api-java.yml"
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to Lambda after build
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    uses: singharpit2209/shared-workflows/.github/workflows/build-java.yml@main
+    with:
+      working_directory: hello-api-java
+
+  deploy:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    uses: singharpit2209/shared-workflows/.github/workflows/deploy-lambda.yml@main
+    with:
+      artifact_version: ${{ needs.build.outputs.artifact_version }}
+      artifact_name: ${{ needs.build.outputs.artifact_name }}
+      artifact_type: ${{ needs.build.outputs.artifact_type }}
+      build_artifact_name: java-lambda-${{ needs.build.outputs.artifact_version }}
+      lambda_function_name: ${{ vars.HELLO_API_JAVA_LAMBDA_FUNCTION_NAME }}
+      artifact_bucket_name: ${{ vars.HELLO_API_JAVA_ARTIFACT_BUCKET }}
+      lambda_alias_name: live
+      environment: dev
+    secrets: inherit
