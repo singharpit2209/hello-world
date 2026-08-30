@@ -36,4 +36,6 @@ jobs:
       artifact_bucket_name: ${{ vars.HELLO_API_PYTHON_ARTIFACT_BUCKET }}
       lambda_alias_name: live
       environment: dev
+      aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
+      aws_region: ${{ vars.AWS_REGION }}
     secrets: inherit
