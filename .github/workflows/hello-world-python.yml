@@ -1,10 +1,10 @@
-name: hello-api-python
+name: hello-world-python
 
 on:
   push:
     paths:
-      - "hello-api-python/**"
-      - ".github/workflows/hello-api-python.yml"
+      - "hello-world-python/**"
+      - ".github/workflows/hello-world-python.yml"
   workflow_dispatch:
     inputs:
       deploy:
@@ -12,6 +12,15 @@ on:
         required: false
         type: boolean
         default: false
+      environment:
+        description: Target environment
+        required: false
+        type: choice
+        default: dev
+        options:
+          - dev
+          - test
+          - prod
 
 permissions:
   contents: read
@@ -21,21 +30,18 @@ jobs:
   build:
     uses: singharpit2209/shared-workflows/.github/workflows/build-python.yml@main
     with:
-      working_directory: hello-api-python
+      working_directory: hello-world-python
 
   deploy:
     needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.deploy
-    uses: singharpit2209/shared-workflows/.github/workflows/deploy-lambda.yml@main
+    uses: singharpit2209/shared-workflows/.github/workflows/deploy-lambda.yml@v0.3.0
     with:
+      app_name: hello-world
+      component: python
+      environment: ${{ inputs.environment }}
       artifact_version: ${{ needs.build.outputs.artifact_version }}
       artifact_name: ${{ needs.build.outputs.artifact_name }}
       artifact_type: ${{ needs.build.outputs.artifact_type }}
       build_artifact_name: python-lambda-${{ needs.build.outputs.artifact_version }}
-      lambda_function_name: ${{ vars.HELLO_API_PYTHON_LAMBDA_FUNCTION_NAME }}
-      artifact_bucket_name: ${{ vars.HELLO_API_PYTHON_ARTIFACT_BUCKET }}
-      lambda_alias_name: live
-      environment: dev
-      aws_role_arn: ${{ vars.AWS_ROLE_ARN }}
-      aws_region: ${{ vars.AWS_REGION }}
     secrets: inherit
