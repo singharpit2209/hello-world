@@ -27,8 +27,8 @@ Deploy targets are **computed from the naming contract** — no `HELLO_*` functi
 Naming (must match hello-world-iac):
 
 ```text
-function = singharpit2209-iac-hello-world-{component}-{environment}
-bucket   = singharpit2209-iac-hello-world-{component}-artifacts-{environment}
+function = hello-world-{component}-{environment}
+bucket   = hello-world-{component}-artifacts-{environment}
 ```
 
 ## E2E

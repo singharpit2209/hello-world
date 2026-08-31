@@ -35,7 +35,7 @@ jobs:
   deploy:
     needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.deploy
-    uses: singharpit2209/shared-workflows/.github/workflows/deploy-lambda.yml@v0.3.2
+    uses: singharpit2209/shared-workflows/.github/workflows/deploy-lambda.yml@v0.4.0
     with:
       app_name: hello-world
       component: node
